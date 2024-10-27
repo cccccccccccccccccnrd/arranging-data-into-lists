@@ -17,6 +17,7 @@
         background: black;
         color: white;
         font-size: 12px;
+        margin: 0.666em;
       }
 
       img {
@@ -34,18 +35,18 @@
 
       #v0 {
         display: grid;
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.666em;
       }
 
       .v {
         position: relative;
         display: flex;
         flex-flow: column;
-        margin: 1em 1em 0 1em;
       }
 
       .v p {
-        /* margin: 1em; */
+        margin: 0 0 0.333em 0;
       }
     </style>
   </head>
@@ -53,38 +54,35 @@
     <div id="v0"></div>
 
     <script>
-      const videosContainer = document.getElementById('v0')
+      async function init() {
+        const response = await fetch('/yt/0')
+        const videos = await response.json()
+        console.log(videos)
 
-      fetch('/yt/0')
-        .then(response => response.json())
-        .then(videos => {
-          videos.forEach(video => {
-            console.log(video)
+        for await (const v of videos) {
+          const videoContainer = document.createElement('div')
+          videoContainer.classList.add('v')
 
-            const videoContainer = document.createElement('div')
-            videoContainer.classList.add('v')
+          const title = document.createElement('p')
+          title.textContent = `${v.title} (${v.duration}) in ${v.q}`
+          videoContainer.appendChild(title)
 
-            const title = document.createElement('p')
-            title.textContent = video.title
-            videoContainer.appendChild(title)
+          const thumbnailLink = document.createElement('a')
+          thumbnailLink.href = v.url
+          thumbnailLink.target = '_blank'
 
-            const thumbnailLink = document.createElement('a')
-            thumbnailLink.href = video.url
-            thumbnailLink.target = '_blank'
+          const thumbnail = document.createElement('img')
+          thumbnail.src = v.bestThumbnail.url
+          thumbnail.alt = v.title
 
-            const thumbnail = document.createElement('img')
-            thumbnail.src = video.bestThumbnail.url
-            thumbnail.alt = video.title
+          thumbnailLink.appendChild(thumbnail)
+          videoContainer.appendChild(thumbnailLink)
 
-            thumbnailLink.appendChild(thumbnail)
-            videoContainer.appendChild(thumbnailLink)
+          document.getElementById('v0').appendChild(videoContainer)
+        }
+      }
 
-            videosContainer.appendChild(videoContainer)
-          })
-        })
-        .catch(error => {
-          console.error('Error fetching videos:', error)
-        })
+      init()
     </script>
   </body>
 </html>

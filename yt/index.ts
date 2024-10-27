@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import ytsr from 'ytsr'
 import csv from 'csvtojson/v2'
-/* import * as ytscr from 'ytscr' */
+import * as ytscr from 'ytscr'
 /* import sw from 'stopwords' */
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
@@ -31,6 +31,7 @@ function split() {
 }
 
 async function request() {
+  let v1 = []
   const q = w[ii]
   results = await ytsr(q, { pages: 1 })
 
@@ -43,12 +44,21 @@ async function request() {
           v.q = q
           return v
         })
-      console.log(Date.now(), q, filtered)
+
+      for await (const v of filtered) {
+        const info = await ytscr.getInfo(v.id)
+        if (info.details.viewCount > 0) {
+          filtered.splice(filtered.indexOf(v), 1)
+        } else {
+          console.log(Date.now(), info.details.viewCount, `https://www.youtube.com/watch?v=${info.details.id}`)
+        }
+      }
+      console.log(Date.now(), q, filtered.length)
       v0 = [...v0, ...filtered]
-      fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v0, null, 2))
+      v1 = [...v1, ...filtered]
+      fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v1, null, 2))
       i++
     } catch (e) {
-      console.log(e)
       i = 0
       ii++
       request()
@@ -58,7 +68,7 @@ async function request() {
 }
 
 export function init() {
-  const last = qs.reverse()[0]
-  ii = w.indexOf(last)
+  const last = qs.slice().reverse()[0]
+  ii = w.indexOf(last) === -1 ? 0 : w.indexOf(last) + 1
   request()
 }
