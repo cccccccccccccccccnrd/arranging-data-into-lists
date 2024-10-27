@@ -1,0 +1,23 @@
+{
+  "name": "arranging-data-into-lists-yt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tsx index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "ruhend-scraper": "^8.0.3",
+    "stopwords": "^0.0.9",
+    "ytscr": "^1.0.5",
+    "ytsr": "^3.8.4"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  },
+  "type": "modules"
+}

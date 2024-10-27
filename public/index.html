@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>v0</title>
+    <style>
+      * {
+         box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        padding 0;
+      }
+
+      body {
+        display: flex;
+        background: black;
+        color: white;
+        font-size: 12px;
+      }
+
+      img {
+        max-width: 100%;
+        width: 30vw;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        display: flex;
+      }
+
+      #v0 {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+      }
+
+      .v {
+        position: relative;
+        display: flex;
+        flex-flow: column;
+        margin: 1em 1em 0 1em;
+      }
+
+      .v p {
+        /* margin: 1em; */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="v0"></div>
+
+    <script>
+      const videosContainer = document.getElementById('v0')
+
+      fetch('/yt/0')
+        .then(response => response.json())
+        .then(videos => {
+          videos.forEach(video => {
+            console.log(video)
+
+            const videoContainer = document.createElement('div')
+            videoContainer.classList.add('v')
+
+            const title = document.createElement('p')
+            title.textContent = video.title
+            videoContainer.appendChild(title)
+
+            const thumbnailLink = document.createElement('a')
+            thumbnailLink.href = video.url
+            thumbnailLink.target = '_blank'
+
+            const thumbnail = document.createElement('img')
+            thumbnail.src = video.bestThumbnail.url
+            thumbnail.alt = video.title
+
+            thumbnailLink.appendChild(thumbnail)
+            videoContainer.appendChild(thumbnailLink)
+
+            videosContainer.appendChild(videoContainer)
+          })
+        })
+        .catch(error => {
+          console.error('Error fetching videos:', error)
+        })
+    </script>
+  </body>
+</html>
