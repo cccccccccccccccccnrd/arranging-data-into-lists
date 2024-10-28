@@ -55,7 +55,7 @@ async function request() {
           filtered.splice(filtered.indexOf(v), 1)
         }
       }
-      console.log(Date.now(), q, filtered.length)
+      console.log(Date.now(), state.ii, q, filtered.length)
       state.v0 = [...state.v0, ...filtered]
       v1 = [...v1, ...filtered]
       fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v1, null, 2))
