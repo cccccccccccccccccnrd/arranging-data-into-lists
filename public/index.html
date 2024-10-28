@@ -14,6 +14,7 @@
 
       body {
         display: flex;
+        flex-flow: column;
         background: black;
         color: white;
         font-size: 12px;
@@ -31,6 +32,17 @@
 
       a {
         display: flex;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.666em;
+        margin: 0 0 0.666em 0;
+      }
+
+      select {
+        overflow: hidden;
       }
 
       #v0 {
@@ -52,35 +64,94 @@
     </style>
   </head>
   <body>
+    <header></header>
     <div id="v0"></div>
 
     <script>
+      let v0
+      let videos
+
+      function res(cur, ns) {
+        var undef
+        ns = ns.split('.')
+        while (cur && ns[0]) cur = cur[ns.shift()] || undef
+        return cur
+      }
+
+      function ui() {
+        document.getElementById('v0').innerHTML = ''
+
+        for (const v of videos) {
+          const div = document.createElement('div')
+          div.classList.add('v')
+
+          const p = document.createElement('p')
+          p.textContent = `${v.title} (${v.duration})`
+          div.appendChild(p)
+
+          const a = document.createElement('a')
+          a.href = v.url
+          a.target = '_blank'
+
+          const img = document.createElement('img')
+          img.src = v.bestThumbnail.url
+          img.alt = v.title
+
+          a.appendChild(img)
+          div.appendChild(a)
+
+          document.getElementById('v0').appendChild(div)
+        }
+      }
+
       async function init() {
         const response = await fetch('/yt/0')
-        const videos = await response.json()
-        console.log(videos)
+        v0 = await response.json()
+        videos = v0
+        console.log(v0.length)
 
-        for await (const v of videos) {
-          const videoContainer = document.createElement('div')
-          videoContainer.classList.add('v')
+        const selects = [
+          {
+            id: 'author.name',
+            s: ['', ...new Set(videos.map(v => v.author.name))]
+          },
+          {
+            id: 'duration',
+            s: ['', ...new Set(videos.map(v => v.duration))]
+          },
+          {
+            id: 'uploadedAt',
+            s: ['', ...new Set(videos.map(v => v.uploadedAt))]
+          },
+          {
+            id: 'title',
+            s: ['', ...new Set(videos.map(v => v.title))]
+          },
+          {
+            id: 'q',
+            s: ['', ...new Set(videos.map(v => v.q))]
+          }
+        ].map(s => {
+          const select = document.createElement('select')
+          select.id = s.id
+          s.s.forEach(v => {
+            const o = document.createElement('option')
+            o.value = v
+            o.textContent = v
+            select.appendChild(o)
+          })
+          document.querySelector('header').appendChild(select)
+          select.addEventListener('change', () => {
+            if (select.value === '') {
+              videos = v0
+            } else {
+              videos = v0.filter(v => res(v, select.id) === select.value)
+            }
+            ui()
+          })
+        })
 
-          const title = document.createElement('p')
-          title.textContent = `${v.title} (${v.duration})`
-          videoContainer.appendChild(title)
-
-          const thumbnailLink = document.createElement('a')
-          thumbnailLink.href = v.url
-          thumbnailLink.target = '_blank'
-
-          const thumbnail = document.createElement('img')
-          thumbnail.src = v.bestThumbnail.url
-          thumbnail.alt = v.title
-
-          thumbnailLink.appendChild(thumbnail)
-          videoContainer.appendChild(thumbnailLink)
-
-          document.getElementById('v0').appendChild(videoContainer)
-        }
+        ui()
       }
 
       init()
