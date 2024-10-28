@@ -112,6 +112,10 @@
 
         const selects = [
           {
+            id: 'title',
+            s: ['', ...new Set(videos.map(v => v.title))]
+          },
+          {
             id: 'author.name',
             s: ['', ...new Set(videos.map(v => v.author.name))]
           },
@@ -122,10 +126,6 @@
           {
             id: 'uploadedAt',
             s: ['', ...new Set(videos.map(v => v.uploadedAt))]
-          },
-          {
-            id: 'title',
-            s: ['', ...new Set(videos.map(v => v.title))]
           },
           {
             id: 'q',
