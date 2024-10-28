@@ -3,5 +3,5 @@ node_modules
 .DS_Store
 *.backup
 
-yt/v0/*
+*.db
 utils/data/*

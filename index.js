@@ -7,8 +7,19 @@ const port = 3666
 app.use(express.static('public'))
 
 app.get('/yt/0', async (req, res) => {
-  const v0 = yt.state.v0
-  res.json(v0.slice().reverse())
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 500
+
+  const videos = await yt.db
+    .find({})
+    .skip((page - 1) * limit)
+    .limit(limit)
+
+  res.json({
+    page,
+    limit,
+    videos
+  })
 })
 
 app.listen(port, () => {

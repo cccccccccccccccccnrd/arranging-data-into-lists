@@ -1,40 +1,41 @@
 const fs = require('fs')
 const path = require('path')
+const Datastore = require('nedb-promises')
 const ytsr = require('ytsr')
 const yts = require('yt-search')
 const csv = require('csvtojson/v2')
 
+const db = Datastore.create({ filename: path.join(__dirname, './v0.db'), autoload: true })
+
 const state = {
-  iterations: 50,
+  iterations: 100,
+  qs: [],
+  w: [],
   i: 0,
-  ii: 0,
-  results: [],
-  v0: [],
-  w: []
+  ii: 0
 }
 
 async function load() {
-  const files = fs.readdirSync(path.join(__dirname, './v0')).filter((file) => file.endsWith('.json'))
-  const qs = files.map((file) => file.replace('.json', ''))
-  const v0 = qs.map((q) => JSON.parse(fs.readFileSync(path.join(__dirname, `./v0/${q}.json`), 'utf8'))).flat()
+  const all = await db.find({})
+  const qs = [...new Set(all.map((v) => v.q))].sort()
   const data = await csv().fromFile(path.join(__dirname, '../utils/data/w.csv'))
-  const w = [...data].map((w) => w.words)
-  console.log(Date.now(), v0.length)
-  return { v0, qs, w }
-}
-
-function split() {
-  const qs = new Set(v0.map((v) => v.q))
-  qs.forEach((q) => {
-    const v = v0.filter((v) => v.q === q)
-    fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v, null, 2))
-  })
+  const w = [...data].map((w) => w.words).sort()
+  console.log(Date.now(), all.length)
+  return { qs, w }
 }
 
 async function request() {
   let v1 = []
   const q = state.w[state.ii]
-  results = await ytsr(q, { pages: 1 })
+
+  if (state.qs.includes(q)) {
+    state.i = 0
+    state.ii++
+    console.log(Date.now(), state.ii, q, 'skipped')
+    return request()
+  }
+
+  let results = await ytsr(q, { pages: 1 })
 
   while (state.i < state.iterations) {
     try {
@@ -48,19 +49,20 @@ async function request() {
 
       for await (const v of filtered) {
         const info = await yts({ videoId: v.id })
-        console.log(info)
         if (info.views === 0 || info.views === NaN) {
-          console.log(Date.now(), info.views, info.url)
+          console.log(Date.now(), state.ii, q, info.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
         }
       }
       console.log(Date.now(), state.ii, q, filtered.length)
-      state.v0 = [...state.v0, ...filtered]
       v1 = [...v1, ...filtered]
-      fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v1, null, 2))
       state.i++
     } catch (e) {
+      if (v1.length > 0) {
+        console.log(Date.now(), state.ii, q, v1.length, 'inserted')
+        await db.insert(v1)
+      }
       state.i = 0
       state.ii++
       request()
@@ -70,17 +72,13 @@ async function request() {
 }
 
 async function init() {
-  const { v0, qs, w } = await load()
-  const last = qs.slice().reverse()[0]
-
-  state.ii = w.indexOf(last) === -1 ? 0 : w.indexOf(last) + 1
-  state.v0 = v0
+  const { qs, w } = await load()
+  state.qs = qs
   state.w = w
-
   request()
 }
 
 module.exports = {
-  state,
+  db,
   init
 }
