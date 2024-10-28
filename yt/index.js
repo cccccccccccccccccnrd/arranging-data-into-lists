@@ -49,7 +49,7 @@ async function request() {
       for await (const v of filtered) {
         const info = await yts({ videoId: v.id })
         console.log(info)
-        if (info.views === 0 || info.views === 'NaN') {
+        if (info.views === 0 || info.views === NaN) {
           console.log(Date.now(), info.views, info.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
