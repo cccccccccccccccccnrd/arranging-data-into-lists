@@ -1,6 +1,6 @@
-import express from 'express'
-import 'dotenv/config.js'
-import * as yt from './yt'
+const express = require('express')
+const yt = require('./yt')
+console.log(yt)
 
 const app = express()
 const port = 3666

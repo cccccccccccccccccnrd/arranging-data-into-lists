@@ -1,25 +1,26 @@
-import fs from 'fs'
-import path from 'path'
-import ytsr from 'ytsr'
-import csv from 'csvtojson/v2'
-import * as ytscr from 'ytscr'
-/* import sw from 'stopwords' */
+const fs = require('fs')
+const path = require('path')
+const ytsr = require('ytsr')
+const yts = require('yt-search')
+const csv = require('csvtojson/v2')
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname)
+const state = {
+  iterations: 50,
+  i: 0,
+  ii: 0,
+  results: [],
+  v0: [],
+  w: []
+}
 
-const iterations = 50
-let i = 0
-let ii = 0
-let results
-export let { v0, qs } = load()
-const w = [...(await csv().fromFile(path.join(__dirname, '../utils/data/w.csv')))].map((w) => w.words)
-
-function load() {
+async function load() {
   const files = fs.readdirSync(path.join(__dirname, './v0')).filter((file) => file.endsWith('.json'))
   const qs = files.map((file) => file.replace('.json', ''))
   const v0 = qs.map((q) => JSON.parse(fs.readFileSync(path.join(__dirname, `./v0/${q}.json`), 'utf8'))).flat()
+  const data = await csv().fromFile(path.join(__dirname, '../utils/data/w.csv'))
+  const w = [...data].map((w) => w.words)
   console.log(Date.now(), v0.length)
-  return { v0, qs }
+  return { v0, qs, w }
 }
 
 function split() {
@@ -32,10 +33,10 @@ function split() {
 
 async function request() {
   let v1 = []
-  const q = w[ii]
+  const q = state.w[state.ii]
   results = await ytsr(q, { pages: 1 })
 
-  while (i < iterations) {
+  while (state.i < state.iterations) {
     try {
       results = await ytsr.continueReq(results.continuation)
       const filtered = results.items
@@ -46,7 +47,8 @@ async function request() {
         })
 
       for await (const v of filtered) {
-        const info = await ytscr.getInfo(v.id)
+        const info = await yts.getInfo({ videoId: v.id })
+        console.log(info)
         if (info.details.viewCount > 0) {
           filtered.splice(filtered.indexOf(v), 1)
         } else {
@@ -54,21 +56,31 @@ async function request() {
         }
       }
       console.log(Date.now(), q, filtered.length)
-      v0 = [...v0, ...filtered]
+      state.v0 = [...state.v0, ...filtered]
       v1 = [...v1, ...filtered]
       fs.writeFileSync(path.join(__dirname, `./v0/${q}.json`), JSON.stringify(v1, null, 2))
-      i++
+      state.i++
     } catch (e) {
-      i = 0
-      ii++
+      state.i = 0
+      state.ii++
       request()
       break
     }
   }
 }
 
-export function init() {
+async function init() {
+  const { v0, qs, w } = await load()
   const last = qs.slice().reverse()[0]
-  ii = w.indexOf(last) === -1 ? 0 : w.indexOf(last) + 1
+
+  state.ii = w.indexOf(last) === -1 ? 0 : w.indexOf(last) + 1
+  state.v0 = v0
+  state.w = w
+
   request()
+}
+
+module.exports = {
+  v0: state.v0,
+  init
 }
