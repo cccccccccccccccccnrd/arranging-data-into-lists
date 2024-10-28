@@ -7,7 +7,7 @@ const port = 3666
 app.use(express.static('public'))
 
 app.get('/yt/0', async (req, res) => {
-  const v0 = yt.v0
+  const v0 = yt.state.v0
   res.json(v0.slice().reverse())
 })
 

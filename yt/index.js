@@ -81,6 +81,6 @@ async function init() {
 }
 
 module.exports = {
-  v0: state.v0,
+  state,
   init
 }
