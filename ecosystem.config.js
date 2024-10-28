@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'arranging',
+      name: 'ls',
       script: './index.js'
     }
   ]
