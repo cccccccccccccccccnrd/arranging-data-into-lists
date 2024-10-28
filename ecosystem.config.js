@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'arranging',
       script: './index.js',
-      interpreter: 'node@18.20.0'
+      interpreter: 'node@18.20.4'
     }
   ]
 }
