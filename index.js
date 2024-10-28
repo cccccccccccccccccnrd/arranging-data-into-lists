@@ -1,6 +1,5 @@
 const express = require('express')
 const yt = require('./yt')
-console.log(yt)
 
 const app = express()
 const port = 3666
