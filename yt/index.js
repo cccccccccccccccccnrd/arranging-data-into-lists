@@ -39,6 +39,7 @@ async function request() {
   while (state.i < state.iterations) {
     try {
       results = await ytsr.continueReq(results.continuation)
+      console.log(results)
       const filtered = results.items
         .filter((v) => v.views === 0)
         .map((v) => {
@@ -47,7 +48,7 @@ async function request() {
         })
 
       for await (const v of filtered) {
-        const info = await yts.getInfo({ videoId: v.id })
+        const info = await ytsr.getInfo({ videoId: v.id })
         console.log(info)
         if (info.details.viewCount > 0) {
           filtered.splice(filtered.indexOf(v), 1)
