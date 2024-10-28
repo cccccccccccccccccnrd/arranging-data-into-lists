@@ -44,6 +44,7 @@ async function request() {
         .filter((v) => v.views === 0)
         .map((v) => {
           v.q = q
+          v.timestamp = Date.now()
           return v
         })
 

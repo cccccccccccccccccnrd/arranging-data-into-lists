@@ -12,6 +12,7 @@ app.get('/yt/0', async (req, res) => {
 
   const videos = await yt.db
     .find({})
+    .sort({ timestamp: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
 
