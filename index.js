@@ -23,6 +23,16 @@ app.get('/yt/0', async (req, res) => {
   })
 })
 
+app.get('/yt/0/stats', async (req, res) => {
+  const videos = await yt.db.find({}).sort({ timestamp: -1 })
+  const length = video.length
+
+  res.json({
+    length,
+    videos
+  })
+})
+
 app.listen(port, () => {
   console.log(`𝒜𝓇𝓇𝒶𝓃𝑔𝒾𝓃𝑔 𝒟𝒶𝓉𝒶 𝐼𝓃𝓉𝑜 𝐿𝒾𝓈𝓉𝓈 http://localhost:${port}`)
 })
