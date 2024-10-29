@@ -25,7 +25,7 @@ app.get('/yt/0', async (req, res) => {
 
 app.get('/yt/0/stats', async (req, res) => {
   const videos = await yt.db.find({}).sort({ timestamp: -1 })
-  const length = video.length
+  const length = videos.length
 
   res.json({
     length,
