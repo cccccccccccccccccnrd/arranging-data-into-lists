@@ -127,7 +127,6 @@
       async function get() {
         const response = await fetch(`/yt/0?page=${page}`)
         const data = await response.json()
-
         v0 = [...v0, ...data.videos]
         videos = [...videos, ...data.videos]
         console.log(videos.length)

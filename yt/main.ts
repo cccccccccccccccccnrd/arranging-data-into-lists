@@ -1,11 +1,11 @@
-const fs = require('fs')
-const path = require('path')
-const Datastore = require('nedb-promises')
-const ytsr = require('ytsr')
-const yts = require('yt-search')
-const csv = require('csvtojson/v2')
+// deno-lint-ignore-file no-explicit-any
+import path from 'node:path'
+import { nextTick } from 'node:process'
+import ytsr from 'ytsr'
+import yts from 'yt-search'
+import { parse } from 'jsr:@std/csv'
 
-const db = Datastore.create({ filename: path.join(__dirname, './v0.db'), autoload: true })
+const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))
 
 const state = {
   iterations: 100,
@@ -16,11 +16,14 @@ const state = {
 }
 
 async function load() {
-  const all = await db.find({})
-  const qs = [...new Set(all.map((v) => v.q))].sort()
-  const data = await csv().fromFile(path.join(__dirname, '../utils/data/w.csv'))
-  const w = [...data].map((w) => w.words).sort()
-  console.log(Date.now(), all.length)
+  const iter = db.list<any>({ prefix: ['videos'] })
+  const list = []
+  for await (const res of iter) list.push(res.value)
+  const qs = [...new Set(list.map((v) => v.q))].sort()
+  const w: any = parse(await Deno.readTextFile(path.join(import.meta.dirname, '../utils/data/w.csv')))
+    .flat()
+    .sort()
+  console.log(Date.now(), list.length)
   return { qs, w }
 }
 
@@ -32,7 +35,9 @@ async function request() {
     state.i = 0
     state.ii++
     console.log(Date.now(), state.ii, q, 'skipped')
-    return request()
+    return nextTick(() => {
+      request()
+    })
   }
 
   let results = await ytsr(q, { pages: 1 })
@@ -50,7 +55,7 @@ async function request() {
 
       for await (const v of filtered) {
         const info = await yts({ videoId: v.id })
-        if (info.views === 0 || info.views === NaN) {
+        if (info.views === 0 || Number.isNaN(info.views)) {
           console.log(Date.now(), state.ii, q, info.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
@@ -61,12 +66,16 @@ async function request() {
       state.i++
     } catch (e) {
       if (v1.length > 0) {
+        for (const v of v1) {
+          await db.set(['videos', v.id], v)
+        }
         console.log(Date.now(), state.ii, q, v1.length, 'inserted')
-        await db.insert(v1)
       }
       state.i = 0
       state.ii++
-      request()
+      nextTick(() => {
+        request()
+      })
       break
     }
   }
@@ -74,12 +83,13 @@ async function request() {
 
 async function init() {
   const { qs, w } = await load()
+
   state.qs = qs
   state.w = w
   request()
 }
 
-module.exports = {
-  db,
-  init
+export default {
+  init,
+  db
 }
