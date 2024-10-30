@@ -4,7 +4,7 @@ module.exports = {
       name: 'ls',
       script: './main.ts',
       interpreter: 'deno',
-      interpreterArgs: 'run --allow-net --allow-env --allow-read --allow-write'
+      interpreterArgs: 'run --allow-net --allow-env --allow-read --allow-write --unstable-kv'
     }
   ]
 }
