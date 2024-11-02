@@ -55,7 +55,8 @@ async function request() {
 
       for await (const v of filtered) {
         const info = await yts({ videoId: v.id })
-        if (info.views === 0 || Number.isNaN(info.views)) {
+        const today = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+        if ((info.views === 0 || Number.isNaN(info.views)) && info.uploadDate !== today) {
           console.log(Date.now(), state.ii, q, info.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
