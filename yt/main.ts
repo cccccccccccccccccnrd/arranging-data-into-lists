@@ -8,6 +8,7 @@ import { parse } from 'jsr:@std/csv'
 const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))
 
 const state = {
+  age: 3,
   iterations: 100,
   qs: [],
   w: [],
@@ -55,8 +56,10 @@ async function request() {
 
       for await (const v of filtered) {
         const info = await yts({ videoId: v.id })
-        const today = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
-        if ((info.views === 0 || Number.isNaN(info.views)) && info.uploadDate !== today) {
+        const d = new Date(info.uploadDate)
+        const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
+
+        if ((info.views === 0 || Number.isNaN(info.views)) && d <= dd) {
           console.log(Date.now(), state.ii, q, info.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
