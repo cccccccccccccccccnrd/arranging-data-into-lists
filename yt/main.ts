@@ -58,7 +58,7 @@ async function request() {
         const info = await yts({ videoId: v.id })
         const d = new Date(info.uploadDate)
         const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
-
+        console.log(Date.now(), state.ii, info.uploadDate, d, dd, d < dd)
         if ((info.views === 0 || Number.isNaN(info.views)) && d <= dd) {
           console.log(Date.now(), state.ii, q, info.url)
         } else {
