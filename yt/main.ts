@@ -55,12 +55,12 @@ async function request() {
         })
 
       for await (const v of filtered) {
-        const info = await yts({ videoId: v.id })
-        const d = new Date(info.uploadDate)
+        const video = await yts({ videoId: v.id })
+        const d = new Date(video.uploadDate)
         const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
-        console.log(Date.now(), state.ii, info.uploadDate, d, dd, d < dd)
-        if ((info.views === 0 || Number.isNaN(info.views)) && d <= dd) {
-          console.log(Date.now(), state.ii, q, info.url)
+        console.log(Date.now(), state.ii, video.ago, video.uploadDate, d, dd, d < dd)
+        if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
+          console.log(Date.now(), state.ii, q, video.url)
         } else {
           filtered.splice(filtered.indexOf(v), 1)
         }
