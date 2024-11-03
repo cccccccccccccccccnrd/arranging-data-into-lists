@@ -145,16 +145,16 @@
             s: ['', ...new Set(videos.map(v => v.author.name))]
           },
           {
-            id: 'duration',
-            s: ['', ...new Set(videos.map(v => v.duration))]
+            id: 'duration.timestamp',
+            s: ['', ...new Set(videos.map(v => v.duration.timestamp))]
           },
           {
             id: 'uploadDate',
             s: ['', ...new Set(videos.map(v => v.uploadDate))]
           },
           {
-            id: 'q',
-            s: ['', ...new Set(videos.map(v => v.q))]
+            id: 'meta.q',
+            s: ['', ...new Set(videos.map(v => v.meta.q))]
           }
         ].map(s => {
           const select = document.createElement('select')

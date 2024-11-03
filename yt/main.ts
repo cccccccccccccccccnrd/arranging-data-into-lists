@@ -20,7 +20,7 @@ async function load() {
   const iter = db.list<any>({ prefix: ['videos'] })
   const list = []
   for await (const res of iter) list.push(res.value)
-  const qs = [...new Set(list.map((v) => v.q))].sort()
+  const qs = [...new Set(list.map((v) => v.meta.q))].sort()
   const w: any = parse(await Deno.readTextFile(path.join(import.meta.dirname, '../utils/data/w.csv')))
     .flat()
     .sort()
@@ -52,11 +52,13 @@ async function request() {
         const video = await yts({ videoId: v.id })
         const d = new Date(video.uploadDate)
         const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
-        console.log(Date.now(), state.ii, video.ago, d < dd)
+        console.log(Date.now(), state.ii, video.ago, video.views === 0 || Number.isNaN(video.views), d <= dd)
         if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
-          console.log(Date.now(), state.ii, q, video.url)
-          video.q = q
-          video.timestamp = Date.now()
+          console.log(Date.now(), state.ii, q, video.ago, video.url)
+          video.meta = {
+            q,
+            timestamp: Date.now()
+          }
           v1.push(video)
         }
       }
@@ -65,7 +67,8 @@ async function request() {
     } catch (e) {
       if (v1.length > 0) {
         for (const v of v1) {
-          await db.set(['videos', v.id], v)
+          console.log(v)
+          await db.set(['videos', v.videoId], v)
         }
       }
       state.i = 0
