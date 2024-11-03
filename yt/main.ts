@@ -46,13 +46,7 @@ async function request() {
   while (state.i < state.iterations) {
     try {
       results = await ytsr.continueReq(results.continuation)
-      const filtered = results.items
-        .filter((v) => v.views === 0)
-        .map((v) => {
-          v.q = q
-          v.timestamp = Date.now()
-          return v
-        })
+      const filtered = results.items.filter((v) => v.views === 0)
 
       for await (const v of filtered) {
         const video = await yts({ videoId: v.id })
@@ -61,19 +55,18 @@ async function request() {
         console.log(Date.now(), state.ii, video.ago, d < dd)
         if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
           console.log(Date.now(), state.ii, q, video.url)
-        } else {
-          filtered.splice(filtered.indexOf(v), 1)
+          video.q = q
+          video.timestamp = Date.now()
+          v1.push(video)
         }
       }
-      console.log(Date.now(), state.ii, q, filtered.length)
-      v1 = [...v1, ...filtered]
+      console.log(Date.now(), state.ii, q, v1.length)
       state.i++
     } catch (e) {
       if (v1.length > 0) {
         for (const v of v1) {
           await db.set(['videos', v.id], v)
         }
-        console.log(Date.now(), state.ii, q, v1.length, 'inserted')
       }
       state.i = 0
       state.ii++
