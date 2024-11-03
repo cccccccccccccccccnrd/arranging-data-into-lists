@@ -106,7 +106,7 @@
           div.classList.add('v')
 
           const p = document.createElement('p')
-          p.textContent = `${v.title} (${v.duration})`
+          p.textContent = `${v.title} (${v.timestamp})`
           div.appendChild(p)
 
           const a = document.createElement('a')
@@ -146,7 +146,15 @@
           },
           {
             id: 'timestamp',
-            s: ['', ...new Set(videos.map(v => v.timestamp))]
+            s: [
+              '',
+              ...new Set(
+                videos
+                  .map(v => v.timestamp)
+                  .sort()
+                  .filter(Boolean)
+              )
+            ]
           },
           {
             id: 'uploadDate',
