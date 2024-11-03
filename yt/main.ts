@@ -52,9 +52,9 @@ async function request() {
         const video = await yts({ videoId: v.id })
         const d = new Date(video.uploadDate)
         const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
-        console.log(Date.now(), state.ii, video.ago, video.views === 0 || Number.isNaN(video.views), d <= dd)
         if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
           console.log(Date.now(), state.ii, q, video.ago, video.url)
+          delete video.duration
           video.meta = {
             q,
             timestamp: Date.now()
@@ -62,12 +62,10 @@ async function request() {
           v1.push(video)
         }
       }
-      console.log(Date.now(), state.ii, q, v1.length)
       state.i++
     } catch (e) {
       if (v1.length > 0) {
-        for (const v of v1) {
-          console.log(v)
+        for await (const v of v1) {
           await db.set(['videos', v.videoId], v)
         }
       }
