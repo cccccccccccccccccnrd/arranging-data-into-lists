@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 import path from 'node:path'
 import { nextTick } from 'node:process'
-import ytsr from 'ytsr'
-import yts from 'yt-search'
+import ytsr from 'npm:ytsr'
+import yts from 'npm:yt-search'
 import { parse } from 'jsr:@std/csv'
 
 const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))

@@ -4,8 +4,11 @@
     "jsr:@std/csv@*": "1.0.3",
     "jsr:@std/streams@^1.0.4": "1.0.7",
     "npm:cors@^2.8.5": "2.8.5",
+    "npm:express@*": "4.21.1",
     "npm:express@^4.21.1": "4.21.1",
-    "npm:yt-search@^2.12.1": "2.12.1"
+    "npm:yt-search@*": "2.12.1",
+    "npm:yt-search@^2.12.1": "2.12.1",
+    "npm:ytsr@*": "3.8.4"
   },
   "jsr": {
     "@std/csv@1.0.3": {
@@ -539,6 +542,9 @@
     "mime@1.6.0": {
       "integrity": "sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg=="
     },
+    "miniget@4.2.3": {
+      "integrity": "sha512-SjbDPDICJ1zT+ZvQwK0hUcRY4wxlhhNpHL9nJOB2MEAXRGagTljsO8MEDzQMTFf0Q8g4QNi8P9lEm/g7e+qgzA=="
+    },
     "minimatch@3.0.8": {
       "integrity": "sha512-6FsRAQsxQ61mw+qP1ZzbL9Bc78x2p5OqNgNpnoAFLTrX8n5Kxph0CsnhmKKNXTWjXqU5L0pGPR7hYk+XWZr60Q==",
       "dependencies": [
@@ -772,6 +778,12 @@
         "jsonpath-plus",
         "minimist",
         "node-fzf"
+      ]
+    },
+    "ytsr@3.8.4": {
+      "integrity": "sha512-rrJo59vDDf98mz/Cuw7Y2YiuTwSm3cs4XsXrP6yjYDXYup/aE0lRxY6XMKR3mGOHKwgLouZqFq8QRllVVVN88w==",
+      "dependencies": [
+        "miniget"
       ]
     }
   },
