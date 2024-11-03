@@ -150,7 +150,7 @@
           },
           {
             id: 'uploadDate',
-            s: ['', ...new Set(videos.map(v => v.uploadDate))]
+            s: ['', ...new Set(videos.map(v => v.uploadDate).sort())]
           },
           {
             id: 'meta.q',
