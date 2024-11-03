@@ -69,6 +69,12 @@
       .v p {
         margin: 0 0 0.333em 0;
       }
+
+      span {
+        font-family: monospace;
+        font-size: 0.666em;
+        color: grey;
+      }
     </style>
   </head>
   <body>
@@ -106,7 +112,7 @@
           div.classList.add('v')
 
           const p = document.createElement('p')
-          p.textContent = `${v.title} (${v.timestamp})`
+          p.innerHTML = `<span>${v.uploadDate}</span> ${v.title} (${v.timestamp})`
           div.appendChild(p)
 
           const a = document.createElement('a')
