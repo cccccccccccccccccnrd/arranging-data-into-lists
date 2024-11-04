@@ -9,7 +9,7 @@ import { Video } from './types.ts'
 const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))
 
 const state = {
-  age: 1 /* in days */,
+  age: 7 /* in days */,
   q: '',
   qs: [],
   w: [],
