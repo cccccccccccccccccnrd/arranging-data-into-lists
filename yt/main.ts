@@ -8,8 +8,8 @@ import { parse } from 'jsr:@std/csv'
 const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))
 
 const state = {
-  age: 3,
-  iterations: 100,
+  age: 7 /* in days */,
+  pages: 100,
   qs: [],
   w: [],
   i: 0,
@@ -43,7 +43,7 @@ async function request() {
 
   let results = await ytsr(q, { pages: 1 })
 
-  while (state.i < state.iterations) {
+  while (state.i < state.pages) {
     try {
       results = await ytsr.continueReq(results.continuation)
       const filtered = results.items.filter((v) => v.views === 0)
