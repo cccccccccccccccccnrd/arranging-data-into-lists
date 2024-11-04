@@ -35,6 +35,7 @@ async function insert(video: Video) {
     .check({ key: ['videos', video.videoId], versionstamp: null })
     .set(['videos', video.videoId], video)
     .commit()
+
   if (!res.ok) {
     console.log(Date.now(), state.ii, q, video.url, 'already in db')
   }
@@ -46,7 +47,7 @@ async function check(v) {
   const video: Video = await yts({ videoId: v.id })
   const d = new Date(video.uploadDate)
   const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
-  console.log(Date.now(), state.ii, q, 'checkin')
+
   if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
     console.log(Date.now(), state.ii, q, video.ago, video.url)
     delete video.duration
@@ -54,18 +55,21 @@ async function check(v) {
       q,
       timestamp: Date.now()
     }
-    await insert(video)
+    return await insert(video)
+  } else {
+    return false
   }
 }
 
 async function request() {
   const q = state.w[state.ii]
   let results = await ytsr(q, { pages: 1 })
+  console.log(Date.now(), state.ii, q)
 
   while (state.i < state.pages) {
     try {
       results = await ytsr.continueReq(results.continuation)
-      const filtered = results.items.filter((v) => v.views === 0)
+      const filtered = results.items.filter((v) => v.views === 0 || v.views === undefined)
 
       for await (const v of filtered) {
         await check(v)
