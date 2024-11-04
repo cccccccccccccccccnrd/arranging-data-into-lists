@@ -9,11 +9,10 @@ import { Video } from './types.ts'
 const db = await Deno.openKv(path.join(import.meta.dirname, 'yt.db'))
 
 const state = {
-  age: 7 /* in days */,
-  pages: 100,
+  age: 1 /* in days */,
+  q: '',
   qs: [],
   w: [],
-  i: 0,
   ii: 0
 }
 
@@ -36,8 +35,8 @@ async function insert(video: Video) {
     .set(['videos', video.videoId], video)
     .commit()
 
-  if (!res.ok) {
-    console.log(Date.now(), state.ii, q, video.url, 'already in db')
+  if (res.ok) {
+    console.log(Date.now(), state.ii, state.w[state.ii], video.title)
   }
 
   return res
@@ -49,10 +48,9 @@ async function check(v) {
   const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
 
   if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
-    console.log(Date.now(), state.ii, q, video.ago, video.url)
     delete video.duration
     video.meta = {
-      q,
+      q: state.w[state.ii],
       timestamp: Date.now()
     }
     return await insert(video)
@@ -63,27 +61,18 @@ async function check(v) {
 
 async function request() {
   const q = state.w[state.ii]
-  let results = await ytsr(q, { pages: 1 })
-  console.log(Date.now(), state.ii, q)
+  const results = await ytsr(q, { pages: Infinity })
+  const filtered = results.items.filter((v) => v.views === 0)
+  console.log(Date.now(), state.ii, q, filtered.length)
 
-  while (state.i < state.pages) {
-    try {
-      results = await ytsr.continueReq(results.continuation)
-      const filtered = results.items.filter((v) => v.views === 0 || v.views === undefined)
-
-      for await (const v of filtered) {
-        await check(v)
-      }
-      state.i++
-    } catch (e) {
-      state.i = 0
-      state.ii++
-      nextTick(() => {
-        request()
-      })
-      break
-    }
+  for await (const v of filtered) {
+    await check(v)
   }
+
+  state.ii++
+  nextTick(() => {
+    request()
+  })
 }
 
 async function init() {
