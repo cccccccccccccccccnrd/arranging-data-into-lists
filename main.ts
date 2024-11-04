@@ -14,7 +14,9 @@ app.get('/yt/0', async (req: any, res: any) => {
   const iter = yt.db.list<any>({ prefix: ['videos'] })
   const list = []
   for await (const res of iter) list.push(res.value)
-  const videos = list.sort((a: any, b: any) => b.timestamp - a.timestamp).slice((page - 1) * limit, page * limit)
+  const videos = list
+    .sort((a: any, b: any) => b.meta.timestamp - a.meta.timestamp)
+    .slice((page - 1) * limit, page * limit)
 
   res.json({
     page,
