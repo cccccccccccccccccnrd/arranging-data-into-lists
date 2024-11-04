@@ -46,6 +46,7 @@ async function check(v) {
   const video: Video = await yts({ videoId: v.id })
   const d = new Date(video.uploadDate)
   const dd = new Date(new Date().setDate(new Date().getDate() - state.age))
+  console.log(Date.now(), state.ii, q, 'checkin')
   if ((video.views === 0 || Number.isNaN(video.views)) && d <= dd) {
     console.log(Date.now(), state.ii, q, video.ago, video.url)
     delete video.duration
