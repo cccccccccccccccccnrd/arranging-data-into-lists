@@ -7,6 +7,10 @@
         box-sizing: border-box;
       }
 
+      html {
+        filter: invert(0);
+      }
+
       html,
       body {
         margin: 0;
@@ -16,10 +20,10 @@
       body {
         display: flex;
         flex-flow: column;
-        background: black;
+        background: grey;
         color: white;
-        font-size: 12px;
-        margin: 0.666em;
+        height: 100dvh;
+        max-width: 666px;
       }
 
       img {
@@ -34,15 +38,40 @@
       a {
         display: flex;
       }
+
+      iframe {
+        display: flex;
+        width: 100%;
+        height: 50dvh;
+        border: 0;
+      }
+
+      #v0 {
+        display: flex;
+        flex-flow: column nowrap;
+        columns: 2;
+        overflow-y: scroll;
+        padding: 0.666em;
+      }
+
+      .v {
+        margin: 0 0 0.666em 0;
+      }
+
+      footer {
+      }
     </style>
   </head>
   <body>
-    <header></header>
     <div id="v0"></div>
+    <footer>
+      <iframe id="p" src="https://www.youtube.com/embed/0"> </iframe>
+    </footer>
 
     <script>
       let v0 = []
       let videos = []
+      let current = {}
       let page = 1
 
       window.addEventListener('scroll', async function (e) {
@@ -71,10 +100,17 @@
           div.classList.add('v')
 
           const p = document.createElement('p')
-          p.innerHTML = `<span>${v.uploadDate}</span> ${v.title} (${v.timestamp})`
+          p.innerHTML = `${v.title} (${v.timestamp})`
           div.appendChild(p)
 
           const a = document.createElement('a')
+          a.addEventListener('click', function (e) {
+            if (current !== v) e.preventDefault()
+            document.querySelector(
+              '#p'
+            ).src = `https://www.youtube.com/embed/${v.videoId}`
+            current = v
+          })
           a.href = v.url
           a.target = '_blank'
 
@@ -95,57 +131,6 @@
 
       async function init() {
         await get()
-
-        const selects = [
-          {
-            id: 'title',
-            s: ['', ...new Set(videos.map(v => v.title))]
-          },
-          {
-            id: 'author.name',
-            s: ['', ...new Set(videos.map(v => v.author.name))]
-          },
-          {
-            id: 'timestamp',
-            s: [
-              '',
-              ...new Set(
-                videos
-                  .map(v => v.timestamp)
-                  .sort()
-                  .filter(Boolean)
-              )
-            ]
-          },
-          {
-            id: 'uploadDate',
-            s: ['', ...new Set(videos.map(v => v.uploadDate).sort())]
-          },
-          {
-            id: 'meta.q',
-            s: ['', ...new Set(videos.map(v => v.meta.q))]
-          }
-        ].map(s => {
-          const select = document.createElement('select')
-          select.id = s.id
-          s.s.forEach(v => {
-            const o = document.createElement('option')
-            o.value = v
-            o.textContent = v
-            select.appendChild(o)
-          })
-          document.querySelector('header').appendChild(select)
-          select.addEventListener('change', () => {
-            if (select.value === '') {
-              videos = v0
-            } else {
-              videos = v0.filter(v => res(v, select.id) === select.value)
-              console.log(videos.length)
-            }
-            ui()
-          })
-        })
-
         ui()
       }
 

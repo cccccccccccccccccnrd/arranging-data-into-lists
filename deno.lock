@@ -7,6 +7,7 @@
     "jsr:@std/streams@^1.0.4": "1.0.7",
     "npm:@observablehq/plot@*": "0.6.16",
     "npm:@observablehq/plot@0.6": "0.6.16",
+    "npm:cors@*": "2.8.5",
     "npm:cors@^2.8.5": "2.8.5",
     "npm:express@*": "4.21.1",
     "npm:express@^4.21.1": "4.21.1",
