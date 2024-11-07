@@ -1,9 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
 import express from 'npm:express'
+import cors from 'npm:cors'
 import yt from './yt/main.ts'
 
 const app = express()
 const port = 3666
+
+app.use(cors())
 
 app.use(express.static('public'))
 

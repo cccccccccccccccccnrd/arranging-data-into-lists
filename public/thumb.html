@@ -34,6 +34,46 @@
       a {
         display: flex;
       }
+
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.666em;
+        padding: 0.666em;
+        background: black;
+        z-index: 10;
+      }
+
+      select {
+        overflow: hidden;
+        width: 100%;
+      }
+
+      #v0 {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.666em;
+        margin: calc(0.666em * 4) 0 0 0;
+      }
+
+      .v {
+        position: relative;
+        display: flex;
+        flex-flow: column;
+        overflow: hidden;
+      }
+
+      .v p {
+        margin: 0 0 0.333em 0;
+      }
+
+      span {
+        font-family: monospace;
+        font-size: 0.9em;
+      }
     </style>
   </head>
   <body>
@@ -78,7 +118,11 @@
           a.href = v.url
           a.target = '_blank'
 
-          a.appendChild(p)
+          const img = document.createElement('img')
+          img.src = v.thumbnail
+          img.alt = v.title
+
+          a.appendChild(img)
           div.appendChild(a)
 
           document.getElementById('v0').appendChild(div)
@@ -86,7 +130,7 @@
       }
 
       async function get() {
-        const response = await fetch(`https://ls.c-e.group/yt/0?page=${page}`)
+        const response = await fetch(`/yt/0?page=${page}`)
         const data = await response.json()
         v0 = [...v0, ...data.videos]
         videos = [...videos, ...data.videos]
