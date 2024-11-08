@@ -24,6 +24,7 @@ async function load() {
   const w: any = parse(await Deno.readTextFile(path.join(import.meta.dirname, '../utils/data/w.csv')))
     .flat()
     .sort()
+    .slice(500)
   console.log(Date.now(), list.length)
   return { qs, w }
 }
