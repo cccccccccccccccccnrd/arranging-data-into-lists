@@ -84,6 +84,10 @@ async function init() {
   request()
 }
 
+if (Deno.args.includes('init')) {
+  init()
+}
+
 export default {
   init,
   db

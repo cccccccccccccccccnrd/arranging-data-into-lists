@@ -2,11 +2,13 @@
   "version": "4",
   "specifiers": {
     "jsr:@ry/jupyter-helper@*": "0.2.0",
+    "jsr:@std/bytes@^1.0.2": "1.0.2",
     "jsr:@std/collections@1": "1.0.9",
     "jsr:@std/csv@*": "1.0.3",
     "jsr:@std/streams@^1.0.4": "1.0.7",
     "npm:@observablehq/plot@*": "0.6.16",
     "npm:@observablehq/plot@0.6": "0.6.16",
+    "npm:@types/node@*": "22.10.7",
     "npm:cors@*": "2.8.5",
     "npm:cors@^2.8.5": "2.8.5",
     "npm:express@*": "4.21.1",
@@ -28,6 +30,9 @@
         "npm:nodejs-polars"
       ]
     },
+    "@std/bytes@1.0.2": {
+      "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
+    },
     "@std/collections@1.0.9": {
       "integrity": "4f58104ead08a04a2199374247f07befe50ba01d9cca8cbb23ab9a0419921e71"
     },
@@ -38,7 +43,10 @@
       ]
     },
     "@std/streams@1.0.7": {
-      "integrity": "1a93917ca0c58c01b2bfb93647189229b1702677f169b6fb61ad6241cd2e499b"
+      "integrity": "1a93917ca0c58c01b2bfb93647189229b1702677f169b6fb61ad6241cd2e499b",
+      "dependencies": [
+        "jsr:@std/bytes"
+      ]
     }
   },
   "npm": {
@@ -48,6 +56,12 @@
         "d3",
         "interval-tree-1d",
         "isoformat"
+      ]
+    },
+    "@types/node@22.10.7": {
+      "integrity": "sha512-V09KvXxFiutGp6B7XkpaDXlNadZxrzajcY50EuoLIpQ6WWYCSvf19lVIazzfIzQvhUN2HjX12spLojTnhuKlGg==",
+      "dependencies": [
+        "undici-types"
       ]
     },
     "accepts@1.3.8": {
@@ -1061,6 +1075,9 @@
     },
     "uhyphen@0.2.0": {
       "integrity": "sha512-qz3o9CHXmJJPGBdqzab7qAYuW8kQGKNEuoHFYrBwV6hWIMcpAmxDLXojcHfFr9US1Pe6zUswEIJIbLI610fuqA=="
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
     },
     "undici@6.20.1": {
       "integrity": "sha512-AjQF1QsmqfJys+LXfGTNum+qw4S88CojRInG/6t31W/1fk6G59s92bnAvGz5Cmur+kQv2SURXEvvudLmbrE8QA=="
