@@ -100,14 +100,7 @@
   </head>
   <body>
     <header></header>
-    <div
-      style="
-        display: flex;
-        flex-flow: column nowrap;
-        width: 100%;
-        max-width: 30dvw;
-      "
-    >
+    <div style="display: flex; flex-flow: column nowrap; width: 100%; max-width: 30dvw">
       <div id="titles"></div>
       <iframe id="p" src="https://www.youtube.com/embed/0"></iframe>
     </div>
@@ -119,11 +112,8 @@
       let current = {}
       let page = 1
 
-      window.addEventListener('scroll', async e => {
-        if (
-          window.innerHeight + Math.round(window.scrollY) >=
-          document.querySelector('#thumbs').offsetHeight
-        ) {
+      window.addEventListener('scroll', async (e) => {
+        if (window.innerHeight + Math.round(window.scrollY) >= document.querySelector('#thumbs').offsetHeight) {
           page++
           await get()
           ui()
@@ -152,9 +142,7 @@
           const a = document.createElement('a')
           a.addEventListener('click', function (e) {
             if (current !== v) e.preventDefault()
-            document.querySelector(
-              '#p'
-            ).src = `https://www.youtube.com/embed/${v.videoId}`
+            document.querySelector('#p').src = `https://www.youtube.com/embed/${v.videoId}`
             current = v
           })
           a.href = v.url
@@ -178,9 +166,7 @@
           const aa = document.createElement('a')
           aa.addEventListener('click', function (e) {
             if (current !== v) e.preventDefault()
-            document.querySelector(
-              '#p'
-            ).src = `https://www.youtube.com/embed/${v.videoId}`
+            document.querySelector('#p').src = `https://www.youtube.com/embed/${v.videoId}`
             current = v
           })
           aa.href = v.url
@@ -194,7 +180,7 @@
       }
 
       async function get() {
-        const response = await fetch(`https://ls.c-e.group/yt/0?page=${page}`)
+        const response = await fetch(`http://localhost:3666/yt/0?page=${page}`)
         const data = await response.json()
         v0 = [...v0, ...data.videos]
         videos = [...videos, ...data.videos]
@@ -207,11 +193,11 @@
         const selects = [
           {
             id: 'title',
-            s: ['', ...new Set(videos.map(v => v.title))]
+            s: ['', ...new Set(videos.map((v) => v.title))]
           },
           {
             id: 'author.name',
-            s: ['', ...new Set(videos.map(v => v.author.name))]
+            s: ['', ...new Set(videos.map((v) => v.author.name))]
           },
           {
             id: 'timestamp',
@@ -219,7 +205,7 @@
               '',
               ...new Set(
                 videos
-                  .map(v => v.timestamp)
+                  .map((v) => v.timestamp)
                   .sort()
                   .filter(Boolean)
               )
@@ -227,16 +213,16 @@
           },
           {
             id: 'uploadDate',
-            s: ['', ...new Set(videos.map(v => v.uploadDate).sort())]
+            s: ['', ...new Set(videos.map((v) => v.uploadDate).sort())]
           },
           {
             id: 'meta.q',
-            s: ['', ...new Set(videos.map(v => v.meta.q))]
+            s: ['', ...new Set(videos.map((v) => v.meta.q))]
           }
-        ].map(s => {
+        ].map((s) => {
           const select = document.createElement('select')
           select.id = s.id
-          s.s.forEach(v => {
+          s.s.forEach((v) => {
             const o = document.createElement('option')
             o.value = v
             o.textContent = v
@@ -247,7 +233,7 @@
             if (select.value === '') {
               videos = v0
             } else {
-              videos = v0.filter(v => res(v, select.id) === select.value)
+              videos = v0.filter((v) => res(v, select.id) === select.value)
               console.log(videos.length)
             }
             ui()

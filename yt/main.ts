@@ -82,11 +82,22 @@ async function init() {
   state.qs = qs
   state.w = w
   request()
+
+  setInterval(() => {
+    purge()
+  }, 1000 * 60 * 60 * 5)
 }
 
 if (Deno.args.includes('init')) {
   init()
 }
+
+async function purge() {
+  const dir = path.join(import.meta.dirname, '../node_modules/.deno/ytsr@3.8.4/node_modules/ytsr/dumps')
+  await Deno.remove(dir, { recursive: true })
+}
+
+purge()
 
 export default {
   init,

@@ -2,6 +2,9 @@ node_modules
 .env
 .DS_Store
 *.backup
+*.mp4
+*.mp3
+*.txt
 
 *.db*
 utils/data/*
