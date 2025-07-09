@@ -48,4 +48,6 @@ function init() {
   yt.init()
 }
 
-init()
+if (process.argv[2] === 'init') {
+  init()
+}
