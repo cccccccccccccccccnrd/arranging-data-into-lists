@@ -180,7 +180,8 @@
       }
 
       async function get() {
-        const response = await fetch(`http://localhost:3666/yt/0?page=${page}`)
+        const URL = location.hostname === 'localhost' ? `http://localhost:3666/yt/0?page=${page}` : `/yt/0?page=${page}`
+        const response = await fetch(URL)
         const data = await response.json()
         v0 = [...v0, ...data.videos]
         videos = [...videos, ...data.videos]
