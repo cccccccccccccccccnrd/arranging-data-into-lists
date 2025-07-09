@@ -94,7 +94,11 @@ if (Deno.args.includes('init')) {
 
 async function purge() {
   const dir = path.join(import.meta.dirname, '../node_modules/.deno/ytsr@3.8.4/node_modules/ytsr/dumps')
-  await Deno.remove(dir, { recursive: true })
+  try {
+    await Deno.remove(dir, { recursive: true })
+  } catch (err) {
+    console.error('no purge needed')
+  }
 }
 
 purge()
