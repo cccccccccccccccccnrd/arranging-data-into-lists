@@ -8,7 +8,7 @@ while true; do
     echo $response
     id=$(echo "$response" | grep -o '"videoId":"[^"]*"' | cut -d'"' -f4)
     seconds=$(echo "$response" | grep -o '"seconds":[0-9]*' | cut -d':' -f2)
-    am start -a android.intent.action.VIEW -d "${YOUTUBE_BASE_URL}${id}"
+    am start -a android.intent.action.VIEW -d "${YOUTUBE_BASE_URL}${id}" -n org.mozilla.firefox/.App
     echo "v: $id ($seconds)"
     sleep $((seconds + 5))
     echo "next"
