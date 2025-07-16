@@ -40,14 +40,32 @@ app.get('/yt/0/stats', async (_req: any, res: any) => {
   })
 })
 
+let v = null
+
+app.get('/yt/0/v', async (_req: any, res: any) => {
+  res.json(v)
+})
+
 app.listen(port, () => {
   console.log(`𝒜𝓇𝓇𝒶𝓃𝑔𝒾𝓃𝑔 𝒟𝒶𝓉𝒶 𝐼𝓃𝓉𝑜 𝐿𝒾𝓈𝓉𝓈 http://localhost:${port}`)
 })
 
-function init() {
-  yt.init()
+async function stream() {
+  let index = 3
+  const iter = yt.db.list<any>({ prefix: ['videos'] })
+  const list = []
+  for await (const res of iter) list.push(res.value)
+
+  while (list.length > 0) {
+    v = list[index]
+    console.log(v)
+    await new Promise((resolve) => setTimeout(resolve, (v.seconds + 5) * 1000))
+    index = (index + 1) % list.length
+  }
 }
 
+stream()
+
 if (process.argv[2] === 'init') {
-  init()
+  yt.init()
 }
